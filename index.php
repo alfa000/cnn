@@ -1,7 +1,9 @@
 <?php 
 session_start();
 if (isset($_SESSION['admin'])) {
-  header('location:index.php');
+  header('location:admin/index.php');
+}else if (isset($_SESSION['user'])) {
+  header('location:user/index.php');
 }
 
 if (isset($_POST['submit'])) {

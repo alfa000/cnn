@@ -93,6 +93,7 @@ if (isset($_POST['batal'])) {
                   <th>ID User</th>
                   <th>Nama</th>
                   <th>Waktu Pinjam</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -81,8 +81,8 @@
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
                           <td style="vertical-align: middle;"><?= $data->stok ?></td>
-                          <td style="vertical-align: middle;"><a href="../edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>
-                          <a href="../barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><a href="edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>
+                          <a href="barang_stok.php?id=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>
                        <?php
                         $no++;                                       
@@ -156,18 +156,18 @@ if (isset($_GET['id'])) {
       $q=mysqli_query($con, "DELETE FROM `barang` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
       $qs=mysqli_query($con, "DELETE FROM `stok` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
       if ($q && $qs) {
-          echo "<script>alert('Data Berhasil Dihapus');window.location='barang.php';</script>";
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_stok.php';</script>";
       }
     }
     else{
       $q=mysqli_query($con, "DELETE FROM `barang` WHERE `barang`.`kode_barang` = '$id'") or die(mysqli_error($con));
       if ($q) {
-          echo "<script>alert('Data Berhasil Dihapus');window.location='barang.php';</script>";
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_stok.php';</script>";
       }
     }
   }
   else{
-    echo "<script>alert('Data Gagal Dihapus');window.location='barang.php';</script>";
+    echo "<script>alert('Data Gagal Dihapus');window.location='barang_stok.php';</script>";
   }
   }
 ?>o 

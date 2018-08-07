@@ -2,13 +2,13 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
   if (empty($_SESSION['user'])) {
-    header('location:../login.php');
+    header('location:../index.php');
   }
  ?>
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="/index.php" class="logo">
+    <a href="index.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">CNN</span>
       <!-- logo for regular state and mobile devices -->

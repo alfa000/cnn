@@ -64,13 +64,11 @@
                 <thead>
                 <tr>
                   <th>No</th>
-                  <th>Kode Barang</th>
-                  <th>Nama Barang</th>
                   <th>Serial Number</th>
+                  <th>Nama Barang</th>
+                  <th>Kode Barang</th>
                   <th>Tempat</th>
                   <th>Kondisi</th>
-                  <th>Tempat</th>
-                  <th>Foto</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -87,10 +85,8 @@
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->tempat ?></td>
                           <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><?= $data->tempat ?></td>
-                          <td style="vertical-align: middle;"><img src="../foto/<?= $data->foto ?>" width="100px" ></td>
-                          <td style="vertical-align: middle;"><a href="../edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>
-                          <a href="../barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><a href="edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>
+                          <a href="barang_sn.php?id=<?=$data->kode_barang?>&sn=<?=$data->sn?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>
                        <?php
                         $no++;                                       
@@ -154,28 +150,29 @@
 </body>
 </html>
 <?php
-if (isset($_GET['id'])) {
+if (isset($_GET['id']) && isset($_GET['sn'])) {
   $id=mysqli_escape_string($con,$_GET['id']);
+  $sn=mysqli_escape_string($con,$_GET['sn']);
   $h=mysqli_query($con, "SELECT * FROM barang WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
   $data=mysqli_fetch_object($h);
   if ($h) {
     if (file_exists("foto/".$data->foto)) {
       unlink("foto/".$data->foto);
-      $q=mysqli_query($con, "DELETE FROM `barang` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
-      $qs=mysqli_query($con, "DELETE FROM `stok` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
+      $q=mysqli_query($con, "DELETE FROM `barang` WHERE `sn` = '$sn'") or die(mysqli_error($con));
+      $qs=mysqli_query($con, "UPDATE `stok` SET stok='stok-1' WHERE kode_barang='$id'") or die(mysqli_error($con));
       if ($q && $qs) {
-          echo "<script>alert('Data Berhasil Dihapus');window.location='barang.php';</script>";
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_sn.php';</script>";
       }
     }
     else{
       $q=mysqli_query($con, "DELETE FROM `barang` WHERE `barang`.`kode_barang` = '$id'") or die(mysqli_error($con));
       if ($q) {
-          echo "<script>alert('Data Berhasil Dihapus');window.location='barang.php';</script>";
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_sn.php';</script>";
       }
     }
   }
   else{
-    echo "<script>alert('Data Gagal Dihapus');window.location='barang.php';</script>";
+    echo "<script>alert('Data Gagal Dihapus');window.location='barang_sn.php';</script>";
   }
   }
 ?>o 

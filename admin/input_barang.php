@@ -13,31 +13,20 @@ if (isset($_POST['submit'])) {
   $tempat   =$_POST['tempat'];
   $stok     =$_POST['stok'];
 
-
-  $nama_gambar  =$_FILES['gambar']['name'];
-  $tmp_file     =$_FILES['gambar']['tmp_name'];
   $serial=1;
   $serial=sprintf("%05s",$serial);
-  $gambar       =$serial."-".$nama_gambar;
-  $path         = "foto/".$gambar;
 
-  if (move_uploaded_file($tmp_file, $path)) {
-    while ($serial<=$stok) {
+  while ($serial<=$stok) {
     $serial=sprintf("%05s",$serial);
-      $qins=mysqli_query($con,"INSERT INTO `barang`  (`kode_barang`, `nama_barang`, sn, `kondisi`,tempat, `foto`) VALUES ('$kode', '$nama', '$kode$serial','$kondisi','$tempat','$gambar')") or die(mysqli_error($con)) ;
+      $qins=mysqli_query($con,"INSERT INTO `barang`  (`kode_barang`, `nama_barang`, sn, `kondisi`,tempat) VALUES ('$kode', '$nama', '$kode$serial','$kondisi','$tempat')") or die(mysqli_error($con)) ;
       $serial++;
-    }
-  $qinss=mysqli_query($con,"INSERT INTO `stok` VALUES('$kode', '$stok'
-)") or die(mysqli_error($con)) ;
+  }
+  $qinss=mysqli_query($con,"INSERT INTO `stok` VALUES('$kode', '$stok')") or die(mysqli_error($con)) ;
   if ($qins && $qinss) {
-      echo "<script>alert('Data Berhasil Disimpan');window.location='barang.php';</script>";
+      echo "<script>alert('Data Berhasil Disimpan');window.location='barang_stok.php';</script>";
   }
   else{
-      echo "<script>alert('Data Gagal Disimpan');window.location='input_barang.php';</script>";
-    }
-  }
-  else{
-    echo "<script>alert('Gambar Gagal Disimpan');history.go(-1);</script>";
+      echo "<script>alert('Data Gagal Disimpan');</script>";
   }
 }
 ?>

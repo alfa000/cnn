@@ -57,13 +57,14 @@
 
   <?php 
   include 'header.php';
+  $_SESSION['idpinjam']=$kodepinjam;
   if (isset($_POST['submit'])) {
   $qtmp=mysqli_query($con,"SELECT * FROM barangtmp WHERE kode_pinjam='".$_SESSION['idpinjam']."'") or die(mysqli_error($con));
   $no=1;
   while ($tmp=mysqli_fetch_object($qtmp)) {
-    $jumlah=$_POST['jumlah'.$no];
-    $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`, `id_user`, `jumlah`, `w_pinjam`, `kep`, `status`) VALUES ('".$_POST['kode']."','".$tmp->kode_barang."','".$_POST['id_user']."','".$jumlah."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
-    $stok=mysqli_query($con,"UPDATE barang SET stok=stok-".$jumlah." WHERE kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
+    $jumlah=mysqli_query($con,"SELECT count(sn) as jumlah FROM barangtmp WHERE kode_pinjam='' group by kode_barang") or die(mysqli_error($con));
+    $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`,`sn`, `id_user`, `w_pinjam`, `kep`, `status`) VALUES ('".$_POST['kode']."','".$tmp->kode_barang."','".$tmp->sn."','".$_POST['id_user']."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
+    $stok=mysqli_query($con,"UPDATE stok SET stok=stok-".$jumlah." WHERE kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
     $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."' AND kode_barang='".$tmp->kode_barang."'");
   $no++;
   }
@@ -81,14 +82,80 @@ if (isset($_GET['a'])) {
   unset($_SESSION['karyawan']);
 }
 if (isset($_GET['hps'])) {
-  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND kode_barang='".$_GET['bar']."'");
+  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND sn='".$_GET['bar']."'");
 }
    ?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+    <div id="get_barang" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width: 1000px;">
+      <!-- konten modal-->
+      <div class="modal-content">
+        <!-- heading modal -->
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Pilih Barang</h4>
+        </div>
+        <!-- body modal -->
+        <div class="modal-body">
+          <div class="col-xs-12">
+            <div class="box-body table-responsive ">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Kode Barang</th>
+                  <th>Nama</th>
+                  <th>Kondisi</th>
+                  <th>Tempat</th>
+                  <th>Serial Number</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                        $q=mysqli_query($con,"SELECT * FROM barang,stok WHERE barang.kode_barang=stok.kode_barang") or die(mysqli_error($con));
+                        $no="1";
+                        while ($data=mysqli_fetch_object($q)) {                      
+                      ?>
+                        <tr>
+                          <td style="vertical-align: middle;"><?= $no ?></td>
+                          <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
+                          <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->kondisi  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->tempat  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->sn  ?></td>
+                          <td style="vertical-align: middle;"><a class="btn btn-primary" href="input_pinjam.php?id_b=<?=$data->sn?>"><i class="fa fa-inser-o"></i>Pilih</a></td>  
+                        </tr>
+                       <?php
+                        $no++;                                       
+                        }
+                        if (isset($_GET['id_b'])) {
+                            $barang=mysqli_query($con,"SELECT * FROM barang WHERE sn='".$_GET['id_b']."'");
+                            $t=mysqli_fetch_object($barang);
+                            $in=mysqli_query($con, "INSERT INTO `barangtmp`(`kode_pinjam`,`kode_barang`,`sn`, `nama_barang`, `kondisi`) VALUES ('".$_SESSION['idpinjam']."','$t->kode_barang','$t->sn','$t->nama_barang','$t->kondisi')");
+                            if ($in) {
+                              echo "<script>window.location='input_pinjam.php';</script>";
+                            }else{
+                              echo "<script>alert('Barang Sudah Dipinjam');window.location='input_pinjam.php';</script>";
+                            }
+                          }
+                      ?>
+                </tbody>
+              </table>
+            </div>
+        </div>
+        </div>
+        <!-- footer modal -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+    </div>
     <div id="get_user" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 700px;">
       <!-- konten modal-->
       <div class="modal-content">
         <!-- heading modal -->
@@ -104,15 +171,14 @@ if (isset($_GET['hps'])) {
                 <thead>
                 <tr>
                   <th>No</th>
-                  <th>Kode Barang</th>
-                  <th>Nama Barang</th>
+                  <th>Kode User</th>
+                  <th>Nama User</th>
                   <th>Foto</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $_SESSION['idpinjam']=$kodepinjam;
                         $q=mysqli_query($con,"SELECT * FROM user WHERE level='User'") or die(mysqli_error($con));
                         $no="1";
                         while ($data=mysqli_fetch_object($q)) {                      
@@ -121,7 +187,7 @@ if (isset($_GET['hps'])) {
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->id_user ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama  ?></td>
-                          <td style="vertical-align: middle;"><img src="../foto/<?= $data->foto ?>" width="100px" ></td>
+                          <td style="vertical-align: middle;"><img src="foto/<?= $data->foto ?>" width="100px" ></td>
                           <td style="vertical-align: middle;"><a class="btn btn-primary" href="input_pinjam.php?id_user=<?=$data->id_user?>"><i class="fa fa-inser-o"></i>Pilih</a></td>  
                         </tr>
                        <?php
@@ -139,7 +205,7 @@ if (isset($_GET['hps'])) {
         </div>
       </div>
     </div>
-  </div>
+    </div>
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
@@ -195,7 +261,7 @@ if (isset($_GET['hps'])) {
               <input class="form-control" type="text" name="waktu" placeholder="Masukan Nama Karyawan" required value="<?= date('Y-m-d H:i:s');?>" readonly>
             </div>
     <div class="col-md-12">
-              <a href="get_barang.php" class="btn btn-primary">Pilih <B></B>Barang</a><br>
+              <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang</a><br>
             </div>
         <div class="col-xs-12">
             <div class="box-body table-responsive ">
@@ -205,8 +271,8 @@ if (isset($_GET['hps'])) {
                   <th>No</th>
                   <th>Kode Barang</th>
                   <th>Nama Barang</th>
+                  <th>Serial Number</th>
                   <th>Kondisi</th>
-                  <th>Jumlah</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -224,18 +290,19 @@ if (isset($_GET['hps'])) {
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->sn  ?></td>
                           <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><input type="number" name="jumlah<?= $no ?>" max="<?=$qyt->stok?>" min="1" width="auto" required></td>
-                          <td style="vertical-align: middle;"><a href="input_pinjam.php?hps=<?=$_SESSION['idpinjam']?>&bar=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><a href="input_pinjam.php?hps=<?=$_SESSION['idpinjam']?>&bar=<?=$data->sn?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>
                        <?php
                         $no++;                                       
                         }
                         }else{
-                         echo "<tr>
-                          <td   colspan='6'><marquee>Peminjaman Kosong</marquee></td>
-                        </tr>";
-                      }
+                          echo '
+                          <tr>
+                          <td colspan="7"><marquee>Barang Belum Di pilih</marquee></td>
+                          </tr>';
+                        }
                       ?>
                         
                 </tbody>
@@ -379,7 +446,23 @@ if (isset($_GET['hps'])) {
     {
       $(‘#get_user’).modal(‘show’);
     }
+  function get_barang()
+    {
+      $(‘#get_barang’).modal(‘show’);
+    }
 </script>
-
+<script>
+  $(function () {
+    $("#example1").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });
+  });
+</script>
 </body>
 </html>

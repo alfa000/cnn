@@ -39,17 +39,6 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Data Tables
-        <small>advanced tables</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Tables</a></li>
-        <li class="active">Data tables</li>
-      </ol>
-    </section>
 
     <!-- Main content -->
     <section class="content">
@@ -90,7 +79,7 @@
                           <td style="vertical-align: middle;"><?= $data->alamat ?></td>
                           <td style="vertical-align: middle;"><?= $data->agama ?></td>
                           <td style="vertical-align: middle;"><?= $data->jenis_kelamin ?></td>
-                          <td style="vertical-align: middle;"><img src="../foto/<?= $data->foto ?>" width="100px" ></td>
+                          <td style="vertical-align: middle;"><img src="foto/<?= $data->foto ?>" width="100px" ></td>
                           <td style="vertical-align: middle;"><a href="edit_karyawan.php?id=<?=$data->id_user?>"><i class="fa fa-edit"></i>Edit</a><br>
                           <a href="karyawan.php?hps=<?=$data->id_user?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>

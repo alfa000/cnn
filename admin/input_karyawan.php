@@ -16,7 +16,7 @@ if (isset($_POST['submit'])) {
   $nama_gambar  =$_FILES['gambar']['name'];
   $tmp_file     =$_FILES['gambar']['tmp_name'];
   $gambar       =$idkar."-".$nama_gambar;
-  $path         = "foto/".$gambar;
+  $path         = "../foto/".$gambar;
 
   if (move_uploaded_file($tmp_file, $path)) {
     $q=mysqli_query($con,"INSERT INTO `user` (`id_user`, `nama`, password, `alamat`,agama, `no_hp`,jenis_kelamin, `foto`, level) VALUES ('$idkar', '$nama', md5('$password'), '$alamat','$agama','$nohp','$jk','$gambar', 'User')") or die(mysqli_error($con)) ;

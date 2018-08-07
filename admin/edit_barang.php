@@ -14,37 +14,32 @@ if (isset($_POST['submit'])) {
 
   $nama_gambar  =$_FILES['gambar']['name'];
   $tmp_file   =$_FILES['gambar']['tmp_name'];
-  $gambar     =$_POST['kode']."-".$nama_gambar;
+  $gambar     =$_POST['serial']."-".$nama_gambar;
   $path     = "foto/".$gambar;
   
 if (empty($nama_gambar)) {
   $q=mysqli_query($con,"UPDATE `barang` SET `nama_barang`='".$_POST['nama']."',`kondisi`='".$_POST['kondisi']."',`tempat`='".$_POST['tempat']."' WHERE kode_barang='".$_POST['kode']."'");
-  $qs=mysqli_query($con,"UPDATE `stok` SET `stok`='".$_POST['stok']."' WHERE kode_barang='".$_POST['kode']."'");
+  $qs=mysqli_query($con,"UPDATE `stok` SET `stok`='".$_POST['stok']."' WHERE sn='".$_POST['serial']."'");
   
   if ($q) {
-      echo "<script>alert('Data Berhasil Edit');window.location='barang.php';</script>";
+      echo "<script>alert('Data Berhasil Edit');window.location='barang_sn.php';</script>";
   }
   else{
-      echo "<script>alert('Guru Dengan ID($id2) Sudah Ada');window.location='edit_barang.php';</script>";
+      echo "<script>alert('Barang Dengan ID($id2) Sudah Ada');window.location='edit_barang.php';</script>";
   }
 }
-else{
-  if (file_exists("foto/".$data->foto)) {      
+else{    
     unlink("foto/".$data->foto);
     if (move_uploaded_file($tmp_file, $path)){
-      $q=mysqli_query($con,"UPDATE `barang` SET `kode_barang`='".$_POST['kode']."',`sn`='".$_POST['serial']."',`nama_barang`='".$_POST['nama']."',`kondisi`='".$_POST['kondisi']."',`tempat`='".$_POST['tempat']."',`foto`='$gambar' WHERE kode_barang='".$_POST['kode']."'");
-      $qs=mysqli_query($con,"UPDATE `stok` SET `stok`='".$_POST['stok']."' WHERE kode_barang='".$_POST['kode']."'");
+      $q=mysqli_query($con,"UPDATE `barang` SET `nama_barang`='".$_POST['nama']."',`kondisi`='".$_POST['kondisi']."',`tempat`='".$_POST['tempat']."',`foto`='$gambar' WHERE sn='".$_POST['serial']."'");
+      $qs=mysqli_query($con,"UPDATE `stok` SET `stok`='".$_POST['stok']."' WHERE kode='".$_POST['kode']."'");
       if ($q && $qs) {
-          echo "<script>alert('Data Berhasil Edit');window.location='barang.php';</script>";
+          echo "<script>alert('Data Berhasil Edit');window.location='barang_sn.php';</script>";
       }
       else{
-          echo "<script>alert('Guru Dengan ID($id2) Sudah Ada');window.location='edit_barang.php';</script>";
+          echo "<script>alert('Barang Dengan ID($id2) Sudah Ada');</script>";
       }
     }
-  }
-  else{
-    echo "<script>alert('Gambar Gagal Diedit');window.location='edit_barang.php';</script>";
-  }
 }
 }
 ?>
@@ -138,7 +133,7 @@ include "header.php";
                 </div>
                 <div class="col-md-6">
                 <label>Serial Number Barang:</label>
-                <input class="form-control" type="text" name="serial" placeholder="Masukan Serial Number Barang" value="<?=@$data->sn?>" required><br>
+                <input class="form-control" type="text" name="serial" placeholder="Masukan Serial Number Barang" value="<?=@$data->sn?>" required readonly><br>
                 </div>
                 <div class="col-md-6">
                 <label>Kondisi Barang :</label>
