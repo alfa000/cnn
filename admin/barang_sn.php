@@ -67,6 +67,7 @@
                   <th>Serial Number</th>
                   <th>Nama Barang</th>
                   <th>Kode Barang</th>
+                  <th>Status</th>
                   <th>Tempat</th>
                   <th>Kondisi</th>
                   <th>Action</th>
@@ -83,6 +84,7 @@
                           <td style="vertical-align: middle;"><?= $data->barcode ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
+                          <td style="vertical-align: middle;"><?= $data->status ?></td>
                           <td style="vertical-align: middle;"><?= $data->tempat ?></td>
                           <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
                           <td style="vertical-align: middle;"><a href="edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>

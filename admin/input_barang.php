@@ -11,10 +11,10 @@ if (isset($_POST['submit'])) {
   $qbc=mysqli_query($con,"SELECT max(barcode) as bc FROM barang") or die(mysqli_error($con));
   $databc=mysqli_fetch_array($qbc);
   $bar=(int) substr($databc['bc'], 4,6);
-  while ($bar<=$stok) {
+  while ($bar<$stok) {
     $bar++;
     $c=sprintf("%04s",$kb).sprintf("%06s",$bar);
-      $qins=mysqli_query($con,"INSERT INTO `barang`(`kode_barang`, `barcode`, `nama_barang`, `kondisi`, `tempat`,ket) VALUES ('$kode','$c','".$_POST['nama']."','".$_POST['kondisi']."','Tersedia','".$_POST['ket']."')") or die(mysqli_error($con)) ;
+      $qins=mysqli_query($con,"INSERT INTO `barang`(`kode_barang`, `barcode`, `nama_barang`, `kondisi`, status, `tempat`,ket) VALUES ('$kode','$c','".$_POST['nama']."','".$_POST['kondisi']."', 'Tersedia','Ditempat','".$_POST['ket']."')") or die(mysqli_error($con)) ;
   }
   $qinss=mysqli_query($con,"INSERT INTO `stok` VALUES('$kode', '$stok')") or die(mysqli_error($con)) ;
   if ($qins && $qinss) {

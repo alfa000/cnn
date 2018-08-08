@@ -62,10 +62,11 @@
   $qtmp=mysqli_query($con,"SELECT * FROM barangtmp WHERE kode_pinjam='".$_SESSION['idpinjam']."'") or die(mysqli_error($con));
   $no=1;
   while ($tmp=mysqli_fetch_object($qtmp)) {
-    $jumlah=mysqli_query($con,"SELECT count(sn) as jumlah FROM barangtmp WHERE kode_pinjam='' group by kode_barang") or die(mysqli_error($con));
-    $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`,`sn`, `id_user`, `w_pinjam`, `kep`, `status`) VALUES ('".$_POST['kode']."','".$tmp->kode_barang."','".$tmp->sn."','".$_POST['id_user']."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
-    $stok=mysqli_query($con,"UPDATE stok SET stok=stok-".$jumlah." WHERE kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
-    $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."' AND kode_barang='".$tmp->kode_barang."'");
+    $qjumlah=mysqli_query($con,"SELECT count(barcode) as jumlah FROM barangtmp WHERE kode_pinjam='".$_POST['kode']."' and kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
+    $djumlah=mysqli_fetch_object($qjumlah);
+    $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`,`barcode`, `id_user`, `w_pinjam`, `kep`, `status`) VALUES ('".$tmp->kode_pinjam."','".$tmp->kode_barang."','".$tmp->barcode."','".$_POST['id_user']."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
+    $stok=mysqli_query($con,"UPDATE stok SET stok=stok-".$djumlah->jumlah." WHERE kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
+    $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."'");
   $no++;
   }
   if ($qpinjam && $stok && $hapus) {
@@ -262,7 +263,7 @@ if (isset($_GET['hps'])) {
             </div>
           <div class="col-md-12">
               <label>Barcode:</label>
-              <input class="form-control" type="text" name="kode" focus>
+              <input class="form-control" type="text" name="kode">
               <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang Manual</a><br>
           </div>
         <div class="col-xs-12">

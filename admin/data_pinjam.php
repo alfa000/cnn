@@ -79,9 +79,8 @@
                 <tr>
                   <th>No</th>
                   <th>Kode Pinjam</th>
-                  <th>Kode Barang</th>
+                  <th>NO Barcode</th>
                   <th>ID Karyawan</th>
-                  <th>Jumlah</th>
                   <th>Waktu Pinjam</th>
                   <th>Waktu Kembali</th>
                   <th>Keperluan</th>
@@ -98,9 +97,8 @@
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_pinjam ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kode_barang  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
                           <td style="vertical-align: middle;"><?= $data->id_user?></td>
-                          <td style="vertical-align: middle;"><?= $data->jumlah ?></td>
                           <td style="vertical-align: middle;"><?= $data->w_pinjam ?></td>
                           <td style="vertical-align: middle;"><?= $data->w_kembali ?></td>
                           <td style="vertical-align: middle;"><?= $data->kep ?></td>
