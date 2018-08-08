@@ -2,24 +2,19 @@
 include '../koneksi.php';
 $pk=mysqli_query($con,"SELECT max(kode_barang) as kode FROM barang") or die(mysqli_error($con));
 $data=mysqli_fetch_array($pk);
-$no=(int) substr($data['kode'], 1,4);
-$no++;
-$kodebarang="B".sprintf("%04s",$no);
+$kb=(int) substr($data['kode'], 1,4);
+$kb++;
+$kodebarang="B".sprintf("%04s",$kb);
 if (isset($_POST['submit'])) {
-
-  $kode     =$_POST['kode'];
-  $nama     =$_POST['nama'];
-  $kondisi  =$_POST['kondisi'];
-  $tempat   =$_POST['tempat'];
-  $stok     =$_POST['stok'];
-
-  $serial=1;
-  $serial=sprintf("%05s",$serial);
-
-  while ($serial<=$stok) {
-    $serial=sprintf("%05s",$serial);
-      $qins=mysqli_query($con,"INSERT INTO `barang`  (`kode_barang`, `nama_barang`, sn, `kondisi`,tempat) VALUES ('$kode', '$nama', '$kode$serial','$kondisi','$tempat')") or die(mysqli_error($con)) ;
-      $serial++;
+  $kode=$_POST['kode'];
+  $stok=$_POST['stok'];
+  $qbc=mysqli_query($con,"SELECT max(barcode) as bc FROM barang") or die(mysqli_error($con));
+  $databc=mysqli_fetch_array($qbc);
+  $bar=(int) substr($databc['bc'], 4,6);
+  while ($bar<=$stok) {
+    $bar++;
+    $c=sprintf("%04s",$kb).sprintf("%06s",$bar);
+      $qins=mysqli_query($con,"INSERT INTO `barang`(`kode_barang`, `barcode`, `nama_barang`, `kondisi`, `tempat`,ket) VALUES ('$kode','$c','".$_POST['nama']."','".$_POST['kondisi']."','Tersedia','".$_POST['ket']."')") or die(mysqli_error($con)) ;
   }
   $qinss=mysqli_query($con,"INSERT INTO `stok` VALUES('$kode', '$stok')") or die(mysqli_error($con)) ;
   if ($qins && $qinss) {
@@ -112,8 +107,10 @@ if (isset($_POST['submit'])) {
             <!-- form start -->
             <form action="" method="post"  enctype="multipart/form-data" role="form">
               <div class="box-body">
+                <div class="col-md-6">
                 <label>Kode Barang :</label>
                 <input class="form-control" type="text" name="kode" readonly="" value="<?=$kodebarang?>" required><br>
+                </div>
                 <div class="col-md-6">
                 <label>Nama Barang :</label>
                 <input class="form-control" type="text" name="nama" placeholder="Masukan Nama Barang" value="" required><br>
@@ -127,22 +124,21 @@ if (isset($_POST['submit'])) {
                 </select><br><br>
                 </div>
                 <div class="col-md-6">
-                <label>Tempat Barang:</label>
-                <input class="form-control" type="text" name="tempat" placeholder="Tempat barang" required=""><br>
-                </div>
-                <div class="col-md-6">
                 <label>Stok Barang :</label>
                 <input class="form-control" type="number" name="stok" placeholder="Masukan Stok Barang" required="" min="0"><br>
                 </div>
-                <div class="form-group">
-                  <label for="exampleInputFile">Gambar :</label>
-                  <input type="file" name="gambar" id="exampleInputFile" required="">
+
+                <div class="col-md-12">
+                  <label>Keterangan:</label>
+                  <textarea class="form-control" name="ket" placeholder="Masukan Keperluan" rows="5"></textarea>
                 </div>
+                <div class="col-md-12">
                 <div class="checkbox">
                   <label>
-                    <input type="checkbox" class="minimal" required> Check me out
-                  </label>
+                    <input type="checkbox" class="minimal" required> Check me out<br>
+                  </label> 
                 </div>
+              </div>
               </div>
               <!-- /.box-body -->
 
@@ -186,7 +182,7 @@ if (isset($_POST['submit'])) {
 <script src="../plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="../plugins/input-mask/jquery.inputmask.extensions.js"></script>
 <!-- date-range-picker -->
-<script src="../https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
 <script src="../plugins/daterangepicker/daterangepicker.js"></script>
 <!-- bootstrap datepicker -->
 <script src="../plugins/datepicker/bootstrap-datepicker.js"></script>

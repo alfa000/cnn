@@ -82,7 +82,7 @@ if (isset($_GET['a'])) {
   unset($_SESSION['karyawan']);
 }
 if (isset($_GET['hps'])) {
-  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND sn='".$_GET['bar']."'");
+  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND barcode='".$_GET['bar']."'");
 }
    ?>
 
@@ -109,7 +109,7 @@ if (isset($_GET['hps'])) {
                   <th>Nama</th>
                   <th>Kondisi</th>
                   <th>Tempat</th>
-                  <th>Serial Number</th>
+                  <th>Barcode</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -125,16 +125,16 @@ if (isset($_GET['hps'])) {
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
                           <td style="vertical-align: middle;"><?= $data->kondisi  ?></td>
                           <td style="vertical-align: middle;"><?= $data->tempat  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->sn  ?></td>
-                          <td style="vertical-align: middle;"><a class="btn btn-primary" href="input_pinjam.php?id_b=<?=$data->sn?>"><i class="fa fa-inser-o"></i>Pilih</a></td>  
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
+                          <td style="vertical-align: middle;"><a class="btn btn-primary" href="input_pinjam.php?id_b=<?=$data->barcode?>"><i class="fa fa-inser-o"></i>Pilih</a></td>  
                         </tr>
                        <?php
                         $no++;                                       
                         }
                         if (isset($_GET['id_b'])) {
-                            $barang=mysqli_query($con,"SELECT * FROM barang WHERE sn='".$_GET['id_b']."'");
+                            $barang=mysqli_query($con,"SELECT * FROM barang WHERE barcode='".$_GET['id_b']."'");
                             $t=mysqli_fetch_object($barang);
-                            $in=mysqli_query($con, "INSERT INTO `barangtmp`(`kode_pinjam`,`kode_barang`,`sn`, `nama_barang`, `kondisi`) VALUES ('".$_SESSION['idpinjam']."','$t->kode_barang','$t->sn','$t->nama_barang','$t->kondisi')");
+                            $in=mysqli_query($con, "INSERT INTO `barangtmp`(`kode_pinjam`,`kode_barang`,`sn`,`barcode`, `nama_barang`, `kondisi`) VALUES ('".$_SESSION['idpinjam']."','$t->kode_barang','$t->sn','$t->barcode','$t->nama_barang','$t->kondisi')");
                             if ($in) {
                               echo "<script>window.location='input_pinjam.php';</script>";
                             }else{
@@ -260,9 +260,11 @@ if (isset($_GET['hps'])) {
               <label>Waktu Pinjam :</label>
               <input class="form-control" type="text" name="waktu" placeholder="Masukan Nama Karyawan" required value="<?= date('Y-m-d H:i:s');?>" readonly>
             </div>
-    <div class="col-md-12">
-              <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang</a><br>
-            </div>
+          <div class="col-md-12">
+              <label>Barcode:</label>
+              <input class="form-control" type="text" name="kode" focus>
+              <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang Manual</a><br>
+          </div>
         <div class="col-xs-12">
             <div class="box-body table-responsive ">
               <table id="example1" class="table table-bordered table-striped">
@@ -270,8 +272,8 @@ if (isset($_GET['hps'])) {
                 <tr>
                   <th>No</th>
                   <th>Kode Barang</th>
+                  <th>Barcode</th>
                   <th>Nama Barang</th>
-                  <th>Serial Number</th>
                   <th>Kondisi</th>
                   <th>Action</th>
                 </tr>
@@ -289,10 +291,10 @@ if (isset($_GET['hps'])) {
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->sn  ?></td>
                           <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><a href="input_pinjam.php?hps=<?=$_SESSION['idpinjam']?>&bar=<?=$data->sn?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><a href="input_pinjam.php?hps=<?=$_SESSION['idpinjam']?>&bar=<?=$data->barcode?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>
                        <?php
                         $no++;                                       

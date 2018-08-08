@@ -126,7 +126,7 @@ include "header.php";
                 </div>
                 <div class="col-md-12">
                 <label>Alamat:</label>
-                <textarea class="form-control" name="alamat" placeholder="Kota/Provinsi/Kecamatan/Kelurahan/RT/RW" rows="8"></textarea><br>
+                <textarea class="form-control" name="alamat" placeholder="Masukan Alamat" rows="8"></textarea><br>
                 </div>
                 <div class="col-md-6">
                 <label>Agama :</label>
@@ -144,27 +144,24 @@ include "header.php";
                 <label>No HP :</label>
                 <input class="form-control" type="number" name="nohp" placeholder="Masukan No hp" required><br>
                 </div>
-                <div class="form-group">
-                <div class="col-md-2">
-                <label>Jenis Kelamin :</label>
+                <div class="col-md-12">
+                <label>Jenis Kelamin :</label>&nbsp;
+                  <input type="radio" name="jk" class="flat-red" value="Laki-laki" required> Laki-laki &nbsp;
+                  <input type="radio" name="jk" class=" flat-red" value="Perempuan" required>  Perempuan<br>               
                 </div>
-                <div class="col-md-4">
-                  <p><input type="radio" name="jk" class="flat-red" value="Laki-laki" required> Laki-laki 
-                  <br>             
-                <div class="com-md-4">             
-                  <input type="radio" name="jk" class=" flat-red" value="Perempuan" required>  Perempuan               
-                </div>
-                </div>
+                <div class="col-md-12">
                 <div class="form-group">
                   <label for="exampleInputFile">Gambar :</label>
                   <input type="file" name="gambar" id="exampleInputFile">
                 </div>
-                </div>
-              <div class="checkbox">
+              </div>
+              <div class="col-md-12">
+                <div class="checkbox">
                   <label>
-                    <input type="checkbox" class="minimal" required> Check me out
+                    <input type="checkbox" class="minimal" required> Check me out<br>
                   </label> 
                 </div>
+              </div>
               </div>
               <!-- /.box-body -->
 

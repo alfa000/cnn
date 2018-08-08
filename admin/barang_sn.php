@@ -80,7 +80,7 @@
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
-                          <td style="vertical-align: middle;"><?= $data->sn ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->tempat ?></td>
