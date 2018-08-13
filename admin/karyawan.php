@@ -80,8 +80,8 @@
                           <td style="vertical-align: middle;"><?= $data->agama ?></td>
                           <td style="vertical-align: middle;"><?= $data->jenis_kelamin ?></td>
                           <td style="vertical-align: middle;"><img src="foto/<?= $data->foto ?>" width="100px" ></td>
-                          <td style="vertical-align: middle;"><a href="edit_karyawan.php?id=<?=$data->id_user?>"><i class="fa fa-edit"></i>Edit</a><br>
-                          <a href="karyawan.php?hps=<?=$data->id_user?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><a href="edit_karyawan.php?id=<?=$data->id_user?>" class="btn btn-warning"><i class="fa fa-edit"></i>Edit</a><br>
+                          <a href="karyawan.php?hps=<?=$data->id_user?>"class="btn btn-danger"><i class="fa fa-trash-o"></i>Hapus</a></td>  
                         </tr>
                        <?php
                         $no++;                                       

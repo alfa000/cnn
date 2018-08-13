@@ -78,6 +78,8 @@ else{
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="../dist/css/skins/_all-skins.min.css">
   <link rel="icon" type="image/png" href="../ico.png">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../plugins/datatables/dataTables.bootstrap.css">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -102,7 +104,7 @@ include "header.php";
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Form Barang
+        Data Barang <small><?=@$data->kode_barang?></small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="index.php"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -119,65 +121,98 @@ include "header.php";
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header with-border"> 
-              <h3 class="box-title">Edit Data Barang</h3>
+              <h3 class="box-title">Detail Barang</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form action="" method="post"  enctype="multipart/form-data" role="form">
               <div class="box-body">
-                <label>Kode Barang :</label>
-                <input class="form-control" type="text" name="kode" readonly="" value="<?=@$data->kode_barang?>" required><br>
-                <div class="col-md-6">
-                <label>Nama Barang :</label>
-                <input class="form-control" type="text" name="nama" placeholder="Masukan Nama Barang" value="<?=@$data->nama_barang?>" required><br>
-                </div>
-                <div class="col-md-6">
-                <label>No Barcode:</label>
-                <input class="form-control" type="text" name="serial" placeholder="Masukan Serial Number Barang" value="<?=@$data->barcode?>" required readonly><br>
-                </div>
-                <div class="col-md-6">
-                <label>Kondisi Barang :</label>
-                <select class="form-control select2" name="kondisi" required>
-                <option value="">Pilih Kondisi barang</option>
-                <option value="Baik" <?=$baik?>>Baik</option>
-                <option value="Rusak"<?=$rusak?>>Rusak</option> 
-                </select><br><br>
-                </div>
-                <div class="col-md-6">
-                <label>Tempat Barang:</label>
-                <input class="form-control" type="text" name="tempat" placeholder="Tempat Barang" value="<?=@$data->tempat?>" required><br>
-                </div>
-                <div class="col-md-6">
-                <label>Stok Barang :</label>
-                <input class="form-control" type="number" name="stok" placeholder="Masukan Stok Barang" value="<?=@$data->stok?>" min="0" required><br>
-                </div>
-                <div class="form-group">
-                  <label for="exampleInputFile">Gambar :</label>
-                  <input type="file" name="gambar" id="exampleInputFile">
-                </div>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" class="minimal" required> Check me out
-                  </label>
+                <table width="100%">
+                  <tr>
+                    <td><label>Barcode </label><td>
+                    <td>:</td>
+                    <td><?=@$data->kode_barang?></td>
+                  </tr>
+                  <tr>
+                    <td><label>Nama Barang </label><td>
+                    <td>:</td>
+                    <td><?=@$data->nama_barang?></td>
+                  </tr>
+                  <tr>
+                    <td><label>Kondisi Barang </label><td>
+                    <td>:</td>
+                    <td><?=@$data->kondisi?></td>
+                  </tr>
+                  <tr>
+                    <td><label>Tempat </label><td>
+                    <td>:</td>
+                    <td><?=@$data->tempat?></td>
+                  </tr>
+                  <tr>
+                    <td><label>Stok </label><td>
+                    <td>:</td>
+                    <td><?=@$data->stok?></td>
+                  </tr>
+                </table>
                 </div>
               </div>
-              <!-- /.box-body -->
-
-              <div class="box-footer">
-              <div class="col-md-1">
-                <button type="submit" class="btn btn-primary" name="submit">Submit</button>
-              </div>
-              <div class="col-md-6">
-                <button type="reset" class="btn btn-primary" style="background-color: coral; border-color: white;">Reset</button>
-              </div>
-            </form>
-          </div>
           <!-- /.box -->
         </div>
         <!--/.col (right) -->
       </div>
       <!-- /.row -->
     </section>
+    <section class="content">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border"> 
+              <h3 class="box-title">Satuan Barang</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+              <div class="box-body">
+              <div class="box-body table-responsive ">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Kode Barang</th>
+                  <th>Nama Barang</th>
+                  <th>Tempat</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                        $q=mysqli_query($con,"SELECT *FROM barang WHERE kode_barang='$id'") or die(mysqli_error($con));
+                        $no="1";
+                        while ($data=mysqli_fetch_object($q)) {
+                      ?>
+                        <tr>
+                          <td style="vertical-align: middle;"><?= $no ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode ?></td>
+                          <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
+                          <td style="vertical-align: middle;"><?= $data->tempat ?></td>
+                          <td style="vertical-align: middle;">
+                            <a href="view_barang.php?id=<?=$data->kode_barang?>" class="btn btn-primary"><i class="fa fa-print"></i>Print Barcode</a>&nbsp;&nbsp;
+                            <a href="edit_barang.php?id=<?=$data->kode_barang?>" class="btn btn-warning"><i class="fa fa-edit"></i>Edit</a>&nbsp;&nbsp;
+                            <a href="barang_stok.php?id=<?=$data->kode_barang?>"class="btn btn-danger"><i class="fa fa-trash-o"></i>Hapus</a>&nbsp;&nbsp;
+                          </td>  
+                        </tr>
+                       <?php
+                        $no++;                                       
+                        }
+                      ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -220,6 +255,9 @@ include "header.php";
 <script src="../dist/js/app.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../dist/js/demo.js"></script>
+<!-- DataTables -->
+<script src="../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../plugins/datatables/dataTables.bootstrap.min.js"></script>
 <!-- Page script -->
 <script>
   $(function () {
@@ -285,6 +323,19 @@ include "header.php";
     //Timepicker
     $(".timepicker").timepicker({
       showInputs: false
+    });
+  });
+</script>
+<script>
+  $(function () {
+    $("#example1").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
     });
   });
 </script>

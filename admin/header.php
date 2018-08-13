@@ -78,16 +78,9 @@ date_default_timezone_set('Asia/Jakarta');
           </a>
         </li>
         <li>
-          <a href="">
+          <a href="barang_stok.php">
             <i class="fa fa-table"></i> <span>Barang</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
           </a>
-          <ul class="treeview-menu">
-            <li><a href="barang_sn.php"><i class="fa fa-circle-o"></i> Serial Number</a></li>
-            <li><a href="barang_stok.php"><i class="fa fa-circle-o"></i> Stok</a></li>
-          </ul>
         </li>
         <li>
           <a href="karyawan.php">

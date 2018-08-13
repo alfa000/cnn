@@ -72,17 +72,23 @@
                 </thead>
                 <tbody>
                 <?php
-                        $q=mysqli_query($con,"SELECT * FROM barang,stok WHERE barang.kode_barang=stok.kode_barang GROUP BY barang.kode_barang") or die(mysqli_error($con));
+                        $q=mysqli_query($con,"SELECT *,count(barcode) as stok FROM barang GROUP BY barang.kode_barang") or die(mysqli_error($con));
                         $no="1";
                         while ($data=mysqli_fetch_object($q)) {
+                          if ($data->stok==0) {
+                            $jumlah="";
+                          }else{
+                            $jumlah=$data->stok;
+                          }
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->stok ?></td>
-                          <td style="vertical-align: middle;"><a href="edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Edit</a><br>
-                          <a href="barang_stok.php?id=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><?= $jumlah ?></td>
+                          <td style="vertical-align: middle;">
+                            <a href="view_barang.php?id=<?=$data->kode_barang?>" class="btn btn-primary"><i class="fa fa-file-text-o"></i>Lihat</a>
+                          </td>  
                         </tr>
                        <?php
                         $no++;                                       
