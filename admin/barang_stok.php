@@ -87,6 +87,7 @@
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
                           <td style="vertical-align: middle;"><?= $jumlah ?></td>
                           <td style="vertical-align: middle;">
+                            <a href="cetak_barcode.php?id=<?=$data->kode_barang?>" class="btn btn-default"><i class="fa fa-print"></i>Print Barcode</a>
                             <a href="view_barang.php?id=<?=$data->kode_barang?>" class="btn btn-primary"><i class="fa fa-file-text-o"></i>Lihat</a>
                           </td>  
                         </tr>

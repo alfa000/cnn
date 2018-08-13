@@ -196,7 +196,7 @@ include "header.php";
                           <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
                           <td style="vertical-align: middle;"><?= $data->tempat ?></td>
                           <td style="vertical-align: middle;">
-                            <a href="view_barang.php?id=<?=$data->kode_barang?>" class="btn btn-primary"><i class="fa fa-print"></i>Print Barcode</a>&nbsp;&nbsp;
+                            <a href="cetak_barcode.php?barcode=<?=$data->barcode?>" class="btn btn-primary"><i class="fa fa-print"></i>Print Barcode</a>&nbsp;&nbsp;
                             <a href="edit_barang.php?id=<?=$data->kode_barang?>" class="btn btn-warning"><i class="fa fa-edit"></i>Edit</a>&nbsp;&nbsp;
                             <a href="barang_stok.php?id=<?=$data->kode_barang?>"class="btn btn-danger"><i class="fa fa-trash-o"></i>Hapus</a>&nbsp;&nbsp;
                           </td>  
