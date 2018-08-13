@@ -52,7 +52,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" onload="document.getElementById('readBarcode').focus();">
 <div class="wrapper">
 
   <?php 
@@ -68,7 +68,7 @@
     $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."'");
   $no++;
   }
-  if ($qpinjam && $stok && $hapus) {
+  if ($qpinjam && $hapus) {
     unset($_SESSION['idpinjam']);
     unset($_SESSION['karyawan']);
     echo "<script>alert('Data Berhasil Disimpan');window.location='data_pinjam.php';</script>";
@@ -132,13 +132,17 @@ if (isset($_GET['hps'])) {
                         $no++;                                       
                         }
                         if (isset($_GET['id_b'])) {
-                            $barang=mysqli_query($con,"SELECT * FROM barang WHERE barcode='".$_GET['id_b']."'");
-                            $t=mysqli_fetch_object($barang);
-                            $in=mysqli_query($con, "INSERT INTO `barangtmp`(`kode_pinjam`,`kode_barang`,`sn`,`barcode`, `nama_barang`, `kondisi`) VALUES ('".$_SESSION['idpinjam']."','$t->kode_barang','$t->sn','$t->barcode','$t->nama_barang','$t->kondisi')");
-                            if ($in) {
-                              echo "<script>window.location='input_pinjam.php';</script>";
+                            $barang=mysqli_query($con,"SELECT * FROM barang WHERE barcode='".$_GET['id_b']."' or barcode='".$_GET['barcode']."'");
+                            if (mysqli_num_rows($barang)==1) {
+                              $t=mysqli_fetch_object($barang);
+                              $in=mysqli_query($con, "INSERT INTO `barangtmp`(`kode_pinjam`,`kode_barang`,`sn`,`barcode`, `nama_barang`, `kondisi`) VALUES ('".$_SESSION['idpinjam']."','$t->kode_barang','$t->sn','$t->barcode','$t->nama_barang','$t->kondisi')");
+                              if ($in) {
+                                echo "<script>window.location='input_pinjam.php';</script>";
+                              }else{
+                                echo "<script>alert('Barang Sudah Dipinjam');window.location='input_pinjam.php';</script>";
+                              }
                             }else{
-                              echo "<script>alert('Barang Sudah Dipinjam');window.location='input_pinjam.php';</script>";
+                               echo "<script>alert('Tidak Ada Barang Dengan Barcode'".$_GET['id_b']."');window.location='input_pinjam.php';</script>";
                             }
                           }
                       ?>
@@ -232,9 +236,23 @@ if (isset($_GET['hps'])) {
           </div>
         </div>
         <!-- /.box-header -->
-        <form action="" method="post"  enctype="multipart/form-data" role="form">
         <div class="box-body">
           <div class="row">
+        <form action="" method="get">
+          <div class="col-md-12">
+            <label>Barcode:</label>
+          </div>
+          <div class="col-md-8">
+              <input class="form-control" type="text" name="barcode" id="readBarcode">
+          </div>
+          <div class="col-md-2">
+              <input class="form-control" type="submit" name="id_b" value="Tambah">
+          </div>
+          <div class="col-md-2">
+              <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang Manual</a>
+          </div>
+        </form>
+        <form action="" method="post"  enctype="multipart/form-data" role="form">
             <div class="col-md-12">
               <label>Kode Peminjaman:</label>
               <input class="form-control" type="text" name="kode" required readonly="" value="<?= $kodepinjam ?>"><br>
@@ -243,15 +261,16 @@ if (isset($_GET['hps'])) {
               <div class="form-group">
                 <label>ID Karyawan</label><br>
                 <?php 
-                  if (isset($_GET['id_user'])) {
+                  if (isset($_SESSION['karyawan']) or isset($_GET['id_user'])) {
                     $_SESSION['karyawan']=$_GET['id_user'];
-                    echo '<input class="form-control" type="text" name="id_user" required readonly="" value="'.$_SESSION['karyawan'].'">
-                    <a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjam</a><br>';
-                  }elseif (empty($_GET['id_user']) && isset($_SESSION['karyawan'])) {
-                    echo '<input class="form-control" type="text" name="id_user" required readonly="" value="'.$_SESSION['karyawan'].'">
+                    $_SESSION['karyawan']=$_SESSION['karyawan'];
+                    echo '
+                    <input class="form-control" type="text" name="id_user" required readonly="" value="'.$_SESSION['karyawan'].'">
                     <a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjam</a><br>';
                   }else{
-                    echo '<a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjam</a><br>';
+                    echo '
+                    <input class="form-control" type="text" name="id_user" required>
+                    <a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjam</a><br>';
                   }
                  ?>
               </div>
@@ -260,11 +279,6 @@ if (isset($_GET['hps'])) {
               <label>Waktu Pinjam :</label>
               <input class="form-control" type="text" name="waktu" placeholder="Masukan Nama Karyawan" required value="<?= date('Y-m-d H:i:s');?>" readonly>
             </div>
-          <div class="col-md-12">
-              <label>Barcode:</label>
-              <input class="form-control" type="text" name="kode">
-              <a onclick="get_barang()" data-toggle="modal" data-target="#get_barang" class="btn btn-primary">Pilih <B></B>Barang Manual</a><br>
-          </div>
         <div class="col-xs-12">
             <div class="box-body table-responsive ">
               <table id="example1" class="table table-bordered table-striped">
@@ -285,8 +299,6 @@ if (isset($_GET['hps'])) {
                         $no="1";
                         if (mysqli_num_rows($q)>=1) {
                           while ($data=mysqli_fetch_object($q)) {
-                          $max=mysqli_query($con,"SELECT stok FROM stok where kode_barang='$data->kode_barang'") or die(mysqli_error($con));
-                          $qyt=mysqli_fetch_object($max);
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
