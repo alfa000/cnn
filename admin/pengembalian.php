@@ -52,7 +52,6 @@ if (isset($_POST['submit'])) {
   $qbarang=mysqli_query($con,"SELECT * FROM pinjam WHERE kode_pinjam='".$_SESSION['kode']."'");
   $no=1;
   while ($dbarang=mysqli_fetch_object($qbarang)) {
-    $jumlah=$_POST['jumlah'.$no];
     $qpinjam=mysqli_query($con,"UPDATE `pinjam` SET `w_kembali`='".$_POST['kembali']."',`status`='Kembali' WHERE kode_pinjam='".$_POST['kode']."'") or die(mysqli_error($con));
     $stok=mysqli_query($con,"UPDATE barang SET stok=stok+".$jumlah." WHERE kode_barang='".$dbarang->kode_barang."'") or die(mysqli_error($con));
   $no++;
@@ -152,7 +151,7 @@ if (isset($_POST['batal'])) {
         <form action="pengembalian.php" method="post"  enctype="multipart/form-data" role="form">
         <div class="box-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="form-group">
                 <label>Kode Pinjam</label><br>
                 <?php 
@@ -197,14 +196,14 @@ if (isset($_POST['batal'])) {
                 <tr>
                   <th>No</th>
                   <th>Kode Barang</th>
+                  <th>Barcode</th>
                   <th>Nama Barang</th>
                   <th>Kondisi</th>
-                  <th>Jumlah</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $barang=mysqli_query($con,"SELECT * FROM barang,pinjam where pinjam.kode_pinjam='".$_SESSION['kode']."' and pinjam.kode_barang=barang.kode_barang") or die(mysqli_error($con));
+                $barang=mysqli_query($con,"SELECT * FROM barang,pinjam where pinjam.kode_pinjam='".$_SESSION['kode']."' and pinjam.barcode=barang.barcode") or die(mysqli_error($con));
                       if (mysqli_num_rows($barang)>=1) {
                       $no=1;
                       while ($data=mysqli_fetch_object($barang)) {
@@ -212,9 +211,14 @@ if (isset($_POST['batal'])) {
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
-                          <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><input type="number" name="jumlah<?=$no?>" value="<?= $data->jumlah ?>" readonly></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->nama_barang ?></td>
+                          <td style="vertical-align: middle;">
+                            <select name="kondisi<?=$no?>">
+                              <option>Baik</option>
+                              <option>Rusak</option>
+                            </select>
+                          </td>
                         </tr>
                        <?php
                         $no++;                                       

@@ -27,13 +27,13 @@ date_default_timezone_set('Asia/Jakarta');
           
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+              <img src="../admin/foto/<?=$_SESSION['foto']?>" class="user-image" alt="User Image">
               <span class="hidden-xs"><?=$_SESSION['nama']?></span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <img src="../admin/foto/<?=$_SESSION['foto']?>" class="img-circle" alt="User Image">
 
                 <p>
                   <?=$_SESSION['nama']?>
@@ -62,7 +62,7 @@ date_default_timezone_set('Asia/Jakarta');
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+          <img src="../admin/foto/<?=$_SESSION['foto']?>" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p><?=$_SESSION['nama']?></p>
@@ -75,26 +75,23 @@ date_default_timezone_set('Asia/Jakarta');
         <li class="header">MAIN NAVIGATION</li>
         <li>
           <a href="index.php">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+            <i class="fa fa-angle-double-up"></i> <span>Peminjaman</span>
+          </a>
+        </li>
+        <li>
+          <a href="pengembalian.php">
+            <i class="fa fa-angle-double-down"></i> <span>Pengembalian</span>
+          </a>
+        </li>
+        <li>
+          <a href="data_pinjam.php">
+            <i class="fa fa-table"></i> <span>Data Peminjaman</span>
           </a>
         </li>
         <li>
           <a href="barang.php">
-            <i class="fa fa-table"></i> <span>Barang</span>
+            <i class="fa fa-table"></i> <span>Data Barang</span>
           </a>
-        </li>
-        <li>
-          <a href="">
-            <i class="fa fa-files-o"></i> <span>Peminjaman</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="input_pinjam.php"><i class="fa fa-circle-o"></i> Input Pinjam</a></li>
-            <li><a href="pengembalian.php"><i class="fa fa-circle-o"></i> Pengembalian</a></li>
-            <li><a href="data_pinjam.php"><i class="fa fa-circle-o"></i> Data Pinjam</a></li>
-          </ul>
         </li>
       </ul>
     </section>

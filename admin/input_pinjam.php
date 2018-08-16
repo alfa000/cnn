@@ -62,8 +62,6 @@
   $qtmp=mysqli_query($con,"SELECT * FROM barangtmp WHERE kode_pinjam='".$_SESSION['idpinjam']."'") or die(mysqli_error($con));
   $no=1;
   while ($tmp=mysqli_fetch_object($qtmp)) {
-    $qjumlah=mysqli_query($con,"SELECT count(barcode) as jumlah FROM barangtmp WHERE kode_pinjam='".$_POST['kode']."' and kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
-    $djumlah=mysqli_fetch_object($qjumlah);
     $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`,`barcode`, `id_user`, `w_pinjam`, `kep`, `status`) VALUES ('".$tmp->kode_pinjam."','".$tmp->kode_barang."','".$tmp->barcode."','".$_POST['id_user']."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
     $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."'");
   $no++;
@@ -80,6 +78,7 @@
 if (isset($_GET['a'])) {
   unset($_SESSION['idpinjam']);
   unset($_SESSION['karyawan']);
+  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='$kodepinjam'");
 }
 if (isset($_GET['hps'])) {
   $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND barcode='".$_GET['bar']."'");
@@ -243,7 +242,7 @@ if (isset($_GET['hps'])) {
             <label>Barcode:</label>
           </div>
           <div class="col-md-8">
-              <input class="form-control" type="text" name="barcode" id="readBarcode">
+              <input class="form-control" type="text" required="" name="barcode" id="readBarcode">
           </div>
           <div class="col-md-2">
               <input class="form-control" type="submit" name="id_b" value="Tambah">

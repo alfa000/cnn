@@ -70,7 +70,7 @@
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Data </h3>
+              <h3 class="box-title">Barang Yang Dipinjam</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive">
@@ -79,28 +79,79 @@
                 <tr>
                   <th>No</th>
                   <th>Kode Pinjam</th>
-                  <th>Kode Barang</th>
-                  <th>ID Karyawan</th>
-                  <th>Jumlah</th>
+                  <th>NO Barcode</th>
                   <th>Waktu Pinjam</th>
-                  <th>Waktu Kembali</th>
-                  <th>Kep</th>
+                  <th>Keperluan</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                        $q=mysqli_query($con,"SELECT * FROM pinjam WHERE id_user='".$_SESSION['user']."'") or die(mysqli_error($con));
+                        $q=mysqli_query($con,"SELECT * FROM pinjam WHERE id_user='".$_SESSION['user']."' and status='Dipinjam'") or die(mysqli_error($con));
                         $no="1";
                         while ($data=mysqli_fetch_object($q)) {
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_pinjam ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kode_barang  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->w_pinjam ?></td>
+                          <td style="vertical-align: middle;"><?= $data->kep ?></td>
+                          <td style="vertical-align: middle;"><?= $data->status ?></td>
+                          <td style="vertical-align: middle;"><a href="../edit_barang.php?id=<?=$data->kode_barang?>"><i class="fa fa-edit"></i>Print</a><br>  
+                        </tr>
+                       <?php
+                        $no++;                                       
+                        }
+                      ?>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.box -->
+    </section>
+    <section class="content">
+
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Barang Yang Dikembalikan</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Kode Pinjam</th>
+                  <th>NO Barcode</th>
+                  <th>ID Karyawan</th>
+                  <th>Waktu Pinjam</th>
+                  <th>Waktu Kembali</th>
+                  <th>Keperluan</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                        $q=mysqli_query($con,"SELECT * FROM pinjam WHERE id_user='".$_SESSION['user']."' and status='Kembali'") or die(mysqli_error($con));
+                        $no="1";
+                        while ($data=mysqli_fetch_object($q)) {
+                      ?>
+                        <tr>
+                          <td style="vertical-align: middle;"><?= $no ?></td>
+                          <td style="vertical-align: middle;"><?= $data->kode_pinjam ?></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?></td>
                           <td style="vertical-align: middle;"><?= $data->id_user?></td>
-                          <td style="vertical-align: middle;"><?= $data->jumlah ?></td>
                           <td style="vertical-align: middle;"><?= $data->w_pinjam ?></td>
                           <td style="vertical-align: middle;"><?= $data->w_kembali ?></td>
                           <td style="vertical-align: middle;"><?= $data->kep ?></td>
@@ -126,7 +177,7 @@
   </div>
   <!-- /.content-wrapper -->
   <?php 
-  include"footer.php";
+  include"../admin/footer.php";
    ?>
 
   <!-- Add the sidebar's background. This div must be placed

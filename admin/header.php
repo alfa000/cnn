@@ -101,7 +101,7 @@ date_default_timezone_set('Asia/Jakarta');
         </li>
         <li>
           <a href="">
-            <i class="fa fa-files-o"></i> <span>Peminjaman</span>
+            <i class="fa fa-exchange-alt"></i> <span>Peminjaman</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>

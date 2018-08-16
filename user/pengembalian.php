@@ -1,18 +1,9 @@
-<?php 
-  include '../koneksi.php';
-  $td = date('dmY');
-  $pk=mysqli_query($con,"SELECT max(kode_pinjam) as kode FROM pinjam") or die(mysqli_error($con));
-  $data=mysqli_fetch_array($pk);
-  $no=(int) substr($data['kode'], 8,7);
-  $no++;
-  $kodepinjam=$td.sprintf("%07s",$no);
- ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Advanced form elements</title>
+  <title>Pengembalian</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -40,13 +31,15 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="../dist/css/skins/_all-skins.min.css">
+  
+  <link rel="stylesheet" href="../plugins/datatables/dataTables.bootstrap.css">
 
   <link rel="icon" type="image/png" href="../ico.png">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <script src="../https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="../https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -54,31 +47,9 @@
 
   <?php 
   include 'header.php';
-if (isset($_POST['submit'])) {
-  $qtmp=mysqli_query($con,"SELECT * FROM barangtmp WHERE kode_pinjam='".$_SESSION['idpinjam']."'");
-  $no=1;
-  while ($tmp=mysqli_fetch_object($qtmp)) {
-    $jumlah=$_POST['jumlah'.$no];
-    $qpinjam=mysqli_query($con,"INSERT INTO `pinjam`(`kode_pinjam`, `kode_barang`, `id_user`, `jumlah`, `w_pinjam`, `kep`, `status`) VALUES ('".$_POST['kode']."','".$tmp->kode_barang."','".$_POST['id_user']."','".$jumlah."','".$_POST['waktu']."','".$_POST['kep']."','Dipinjam')") or die(mysqli_error($con));
-    $stok=mysqli_query($con,"UPDATE barang SET stok=stok-".$jumlah." WHERE kode_barang='".$tmp->kode_barang."'") or die(mysqli_error($con));
-    $hapus=mysqli_query($con,"DELETE FROM `barangtmp` WHERE kode_pinjam='".$tmp->kode_pinjam."' AND kode_barang='".$tmp->kode_barang."'");
-  $no++;
-  }
-  if ($qpinjam && $stok && $hapus) {
-    unset($_SESSION['idpinjam']);
-    unset($_SESSION['karyawan']);
-    echo "<script>alert('Data Berhasil Disimpan');window.location='data_pinjam.php';</script>";
-  }
-  else{
-      echo "<script>alert('Data Gagal Disimpan');</script>";
-    }
-}
-if (isset($_GET['a'])) {
-  unset($_SESSION['idpinjam']);
-  unset($_SESSION['karyawan']);
-}
-if (isset($_GET['hps'])) {
-  $qhapus=mysqli_query($con, "DELETE FROM `barangtmp` WHERE kode_pinjam='".$_GET['hps']."' AND kode_barang='".$_GET['bar']."'");
+  include '../koneksi.php';
+if (isset($_POST['batal'])) {
+  unset($_SESSION['kode']);
 }
    ?>
 
@@ -91,8 +62,43 @@ if (isset($_GET['hps'])) {
         <!-- heading modal -->
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Pilih User</h4>
+          <h4 class="modal-title">Peminjamam</h4>
         </div>
+        <!-- body modal -->
+        <div class="modal-body">
+          <div class="col-xs-12">
+            <div class="box-body table-responsive ">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Kode Pinjam</th>
+                  <th>ID User</th>
+                  <th>Nama</th>
+                  <th>Waktu Pinjam</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                        $q=mysqli_query($con,"SELECT * FROM pinjam,user WHERE status='Dipinjam' and user.id_user='".$_SESSION['user']."' and pinjam.id_user=user.id_user GROUP BY pinjam.kode_pinjam") or die(mysqli_error($con));
+                        while ($data=mysqli_fetch_object($q)) {                      
+                      ?>
+                        <tr>
+                          <td style="vertical-align: middle;"><?= $data->kode_pinjam ?></td>
+                          <td style="vertical-align: middle;"><?= $data->id_user ?></td>
+                          <td style="vertical-align: middle;"><?= $data->nama  ?></td>
+                          <td style="vertical-align: middle;"><?= $data->w_pinjam  ?></td>
+                          <td style="vertical-align: middle;"><a href="pengembalian.php?kode=<?=$data->kode_pinjam?>"><i class="fa fa-inser-o"></i>Pilih</a></td>  
+                        </tr>
+                       <?php                                     
+                        }
+                      ?>
+                </tbody>
+              </table>
+            </div>
+        </div>
+        </div>
+        <!-- footer modal -->
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
         </div>
@@ -106,8 +112,8 @@ if (isset($_GET['hps'])) {
         <small>Preview</small>
       </h1>
       <ol class="breadcrumb">
-        <li><a href="../#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="../#">Forms</a></li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Forms</a></li>
         <li class="active">Advanced Elements</li>
       </ol>
     </section>
@@ -125,25 +131,46 @@ if (isset($_GET['hps'])) {
           </div>
         </div>
         <!-- /.box-header -->
-        <form action="" method="post"  enctype="multipart/form-data" role="form">
         <div class="box-body">
+        <form action="cek_barang.php" method="post"  enctype="multipart/form-data" role="form">
           <div class="row">
             <div class="col-md-12">
-              <label>Kode Peminjaman:</label>
-              <input class="form-control" type="text" name="kode" required readonly="" value="<?= $kodepinjam ?>"><br>
+              <div class="form-group">
+                <label>Kode Pinjam</label><br>
+                <?php 
+                  if (isset($_GET['kode'])) {
+                    $_SESSION['kode']=$_GET['kode'];
+                    $qisi=mysqli_query($con,"SELECT * FROM pinjam WHERE kode_pinjam='".$_SESSION['kode']."'");
+                    $disi=mysqli_fetch_object($qisi);
+                    echo '<input class="form-control" type="text" name="kode" required readonly="" value="'.$_SESSION['kode'].'">
+                    <a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjaman</a><br>';
+                  }elseif (empty($_GET['kode']) && isset($_SESSION['kode'])) {
+                    echo '<input class="form-control" type="text" name="kode" required readonly="" value="'.$_SESSION['kode'].'">
+                    <a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjaman</a><br>';
+                  }else{
+                    echo '<a href="" onclick="get_user()" data-toggle="modal" data-target="#get_user" class="btn btn-primary">Pilih Peminjam</a><br>';
+                  }
+                 ?>
+              </div>
             </div>
+            <div class="col-md-6">
+              <label>Waktu Kembali :</label>
+              <input class="form-control" type="datetime" name="kembali" placeholder="Masukan Nama Karyawan" required value="<?= date('Y-m-d H:i:s');?>" readonly>
+            </div>
+            <?php 
+            if (isset($_SESSION['kode'])) {
+              $qisi=mysqli_query($con,"SELECT * FROM pinjam WHERE kode_pinjam='".$_SESSION['kode']."'");
+              $disi=mysqli_fetch_object($qisi);
+             ?>
             <div class="col-md-6">
               <div class="form-group">
                 <label>ID Karyawan</label><br>
-                  <input class="form-control" type="text" name="id_user" required readonly="" value="<?=$_SESSION['user']?>">
+                <input class="form-control" type="text" name="id_user" required readonly="" value="<?=$disi->id_user?>">
               </div>
             </div>
             <div class="col-md-6">
               <label>Waktu Pinjam :</label>
-              <input class="form-control" type="text" name="waktu" placeholder="Masukan Nama Karyawan" required value="<?= date('Y-m-d H:i:s');?>" readonly>
-            </div>
-    <div class="col-md-12">
-              <a href="get_barang.php" class="btn btn-primary">Pilih <B></B>Barang</a><br>
+              <input class="form-control" type="text" name="waktu" placeholder="Masukan Nama Karyawan" required value="<?=$disi->w_pinjam?>" readonly>
             </div>
         <div class="col-xs-12">
             <div class="box-body table-responsive ">
@@ -152,29 +179,29 @@ if (isset($_GET['hps'])) {
                 <tr>
                   <th>No</th>
                   <th>Kode Barang</th>
+                  <th>Barcode</th>
                   <th>Nama Barang</th>
                   <th>Kondisi</th>
-                  <th>Jumlah</th>
-                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $_SESSION['idpinjam']=$kodepinjam;
-                        $q=mysqli_query($con,"SELECT * FROM barangtmp WHERE kode_pinjam='".$_SESSION['idpinjam']."'") or die(mysqli_error($con));
-                        $no="1";
-                        if (mysqli_num_rows($q)>=1) {
-                          while ($data=mysqli_fetch_object($q)) {
-                          $max=mysqli_query($con,"SELECT stok FROM barang where kode_barang='$data->kode_barang'") or die(mysqli_error($con));
-                          $qyt=mysqli_fetch_object($max);
+                $barang=mysqli_query($con,"SELECT * FROM barang,pinjam where pinjam.kode_pinjam='".$_SESSION['kode']."' and pinjam.barcode=barang.barcode") or die(mysqli_error($con));
+                      if (mysqli_num_rows($barang)>=1) {
+                      $no=1;
+                      while ($data=mysqli_fetch_object($barang)) {
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
-                          <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><input type="number" name="jumlah<?= $no ?>" max="<?=$qyt->stok?>" min="1" width="auto" required></td>
-                          <td style="vertical-align: middle;"><a href="input_pinjam.php?hps=<?=$_SESSION['idpinjam']?>&bar=<?=$data->kode_barang?>"><i class="fa fa-trash-o"></i>Hapus</a></td>  
+                          <td style="vertical-align: middle;"><?= $data->kode_barang ?><input type="hidden" name="kode<?=$no?>"></td>
+                          <td style="vertical-align: middle;"><?= $data->barcode  ?><input type="hidden" name="barcode<?=$no?>"></td>
+                          <td style="vertical-align: middle;"><?= $data->nama_barang ?><input type="hidden" name="nama<?=$no?>"></td>
+                          <td style="vertical-align: middle;">
+                            <select name="kondisi<?=$no?>">
+                              <option value="Baik">Baik</option>
+                              <option value="Rusak">Rusak</option>
+                            </select>
+                          </td>
                         </tr>
                        <?php
                         $no++;                                       
@@ -189,11 +216,10 @@ if (isset($_GET['hps'])) {
                 </tbody>
               </table>
         </div>
-        <!-- /.col -->
       </div>
             <div class="col-md-12">
               <label>Keperluan:</label>
-              <textarea class="form-control" name="kep" placeholder="Masukan Keperluan" required rows="5"></textarea>
+              <textarea class="form-control" name="kep" placeholder="Masukan Keterangan" required rows="5" readonly=""><?=$disi->kep?></textarea>
             </div>
           </div>
           <!-- /.row -->
@@ -201,10 +227,13 @@ if (isset($_GET['hps'])) {
         <!-- /.box-body -->
         <div class="box-footer">
             <div class="col-md-4">
-              <button type="submit" class="btn btn-primary" name="submit">Submit</button>
-              <a href="input_pinjam.php?a=btl" class="btn btn-warning" name="batal">Batal</a>
+              <button type="submit" class="btn btn-primary" name="cek">Submit</button>
+              <button type="submit" class="btn btn-warning" name="batal">Batal</button>
             </div>
         </div>
+        <?php 
+        }
+         ?>
         </form>
       </div>
       <!-- /.box -->
@@ -213,7 +242,7 @@ if (isset($_GET['hps'])) {
   </div>
   <!-- /.content-wrapper -->
   <?php 
-    include '../footer.php';
+    include '../admin/footer.php';
    ?>
 
 
@@ -234,7 +263,7 @@ if (isset($_GET['hps'])) {
 <script src="../plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="../plugins/input-mask/jquery.inputmask.extensions.js"></script>
 <!-- date-range-picker -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script src="../https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
 <script src="../plugins/daterangepicker/daterangepicker.js"></script>
 <!-- bootstrap datepicker -->
 <script src="../plugins/datepicker/bootstrap-datepicker.js"></script>
@@ -253,6 +282,9 @@ if (isset($_GET['hps'])) {
 <!-- AdminLTE for demo purposes -->
 <script src="../dist/js/demo.js"></script>
 <!-- Page script -->
+<!-- DataTables -->
+<script src="../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script>
   $(function () {
     //Initialize Select2 Elements
@@ -324,6 +356,19 @@ if (isset($_GET['hps'])) {
     {
       $(‘#get_user’).modal(‘show’);
     }
+</script>
+<script>
+  $(function () {
+    $("#example1").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });
+  });
 </script>
 </body>
 </html>
