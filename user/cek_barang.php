@@ -50,13 +50,12 @@
   include 'header.php';
   include '../koneksi.php';
   ?>
-  
+
   <div class="content-wrapper">
   <?php
-  $no=1;
-  $qbarang=mysqli_query($con,"SELECT * FROM pinjam WHERE kode_pinjam='".$_SESSION['kode']."'");
-  while ($dbarang=mysqli_fetch_object($qbarang)) {
-    if ($_POST['kondisi'.$no]=="Rusak") {
+  $a=1;
+  while ($a<$_POST['angka']) {
+    if ($_POST['kondisi'.$a]=="Rusak") {
   ?>
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -233,7 +232,9 @@
   <!-- /.content-wrapper -->
   <?php
     }
+    $a++;
   }
+  $no=1;
   if (isset($_POST['submit'])) {
     $qpinjam=mysqli_query($con,"UPDATE `pinjam` SET `w_kembali`='".$_POST['kembali']."',`status`='Kembali' WHERE kode_pinjam='".$_POST['kode']."'") or die(mysqli_error($con));
   $no++;

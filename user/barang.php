@@ -24,8 +24,8 @@
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
-  <script src="../https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="../https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -66,29 +66,30 @@
                   <th>No</th>
                   <th>Kode Barang</th>
                   <th>Nama Barang</th>
-                  <th>Serial Number</th>
-                  <th>Kondisi</th>
-                  <th>Tempat</th>
                   <th>Stok</th>
-                  <th>Foto</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                        $q=mysqli_query($con,"SELECT * FROM barang,stok WHERE stok.kode_barang=barang.kode_barang") or die(mysqli_error($con));
+                        $q=mysqli_query($con,"SELECT *,count(barcode) as stok FROM barang GROUP BY barang.kode_barang") or die(mysqli_error($con));
                         $no="1";
                         while ($data=mysqli_fetch_object($q)) {
+                          if ($data->stok==0) {
+                            $jumlah="";
+                          }else{
+                            $jumlah=$data->stok;
+                          }
                       ?>
                         <tr>
                           <td style="vertical-align: middle;"><?= $no ?></td>
                           <td style="vertical-align: middle;"><?= $data->kode_barang ?></td>
                           <td style="vertical-align: middle;"><?= $data->nama_barang  ?></td>
-                          <td style="vertical-align: middle;"><?= $data->sn ?></td>
-                          <td style="vertical-align: middle;"><?= $data->kondisi ?></td>
-                          <td style="vertical-align: middle;"><?= $data->tempat ?></td>
-                          <td style="vertical-align: middle;"><?= $data->stok ?></td>
-                          <td style="vertical-align: middle;"><img src="../foto/<?= $data->foto ?>" width="100px" ></td>
-                          </tr>
+                          <td style="vertical-align: middle;"><?= $jumlah ?></td>
+                          <td style="vertical-align: middle;">
+                            <a href="view_barang.php?id=<?=$data->kode_barang?>" class="btn btn-primary"><i class="fa fa-file-text-o"></i>Lihat</a>
+                          </td>  
+                        </tr>
                        <?php
                         $no++;                                       
                         }
@@ -108,7 +109,7 @@
   </div>
   <!-- /.content-wrapper -->
   <?php 
-  include '../footer.php';
+  include 'footer.php';
    ?>
 
   <!-- Control Sidebar -->
@@ -150,3 +151,29 @@
 </script>
 </body>
 </html>
+<?php
+if (isset($_GET['id'])) {
+  $id=mysqli_escape_string($con,$_GET['id']);
+  $h=mysqli_query($con, "SELECT * FROM barang WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
+  $data=mysqli_fetch_object($h);
+  if ($h) {
+    if (file_exists("foto/".$data->foto)) {
+      unlink("foto/".$data->foto);
+      $q=mysqli_query($con, "DELETE FROM `barang` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
+      $qs=mysqli_query($con, "DELETE FROM `stok` WHERE `kode_barang` = '$id'") or die(mysqli_error($con));
+      if ($q && $qs) {
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_stok.php';</script>";
+      }
+    }
+    else{
+      $q=mysqli_query($con, "DELETE FROM `barang` WHERE `barang`.`kode_barang` = '$id'") or die(mysqli_error($con));
+      if ($q) {
+          echo "<script>alert('Data Berhasil Dihapus');window.location='barang_stok.php';</script>";
+      }
+    }
+  }
+  else{
+    echo "<script>alert('Data Gagal Dihapus');window.location='barang_stok.php';</script>";
+  }
+  }
+?>o 

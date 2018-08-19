@@ -212,7 +212,7 @@ if (isset($_POST['batal'])) {
                         </tr>";
                       }
                       ?>
-                        
+                        <input type="text" name="angka" value="<?=$no?>">
                 </tbody>
               </table>
         </div>

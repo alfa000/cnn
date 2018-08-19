@@ -180,7 +180,7 @@ if (isset($_GET['hps'])) {
         <!-- /.box-header -->
         <div class="box-body">
           <div class="row">
-            <form action="" method="get">
+        <form action="" method="get">
           <div class="col-md-12">
             <label>Barcode:</label>
           </div>
